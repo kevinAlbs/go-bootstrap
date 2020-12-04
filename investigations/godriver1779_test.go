@@ -13,7 +13,7 @@ import (
 )
 
 func TestGodriver1779(t *testing.T) {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017/?herp=direct"))
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017/"))
 	if err != nil {
 		fmt.Println(err)
 		return
