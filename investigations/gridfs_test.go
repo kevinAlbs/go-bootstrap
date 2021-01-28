@@ -11,6 +11,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+type Cat struct {
+	x int
+}
+
+type Cat2 Cat
+
 func TestGridFS(t *testing.T) {
 	ctx := context.Background()
 	opts := options.Client().ApplyURI("mongodb://localhost:27017")
@@ -18,6 +24,9 @@ func TestGridFS(t *testing.T) {
 	db := client.Database("test")
 	data := []byte("abc.def.ghi")
 	var chunkSize int32 = 4
+
+	var c Cat2
+	c.x = 123
 
 	testcases := []struct {
 		firstRead          int
