@@ -5,15 +5,15 @@ import (
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"kevinalbs.com/go-bootstrap/util"
 
 	"context"
 	"time"
 )
 
-// DoPing pings
-func DoPing(ctx context.Context, client *mongo.Client) error {
+func doPing(ctx context.Context, client *mongo.Client) error {
 	err := client.Ping(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("db error: %w", err)
@@ -21,34 +21,21 @@ func DoPing(ctx context.Context, client *mongo.Client) error {
 	return nil
 }
 
-type Test {
-	arr bsoncore.Array
-}
-
 func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	// Set a command monitor to log all commands and replies.
-	// opts.SetMonitor(CreateMonitor())
+	opts := options.Client()
+	// Uncomment to enable logging of all commands and replies.
+	// opts.SetMonitor(util.CreateMonitor())
 
-	client, err := mongo.Connect(ctx)
+	client, err := mongo.Connect(ctx, opts)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	coll := client.Database("test").Collection("coll")
-	update := bson.D{
-		{"$addToSet", bson.D{{"outsideIp", "string"}}},
-	}
-	filter := bson.D{{"_id", 0}}
-	updateResult, err := coll.UpdateOne(context.TODO(), filter, update)
-	fmt.Println(updateResult)
-
-	var t Test
-	
-
-	// I have a single document: { "_id" : 0, "outsideIp" : [ "a", "b" ] }
-
-
+	doc := bson.D{{"x", 1}}
+	coll.InsertOne(ctx, doc)
+	fmt.Println("inserted", util.ToJson(doc), "into", coll.Name())
 }

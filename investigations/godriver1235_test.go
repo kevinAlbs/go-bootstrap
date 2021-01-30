@@ -1,4 +1,4 @@
-package common_test
+package investigations
 
 import (
 	"fmt"

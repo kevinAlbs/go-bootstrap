@@ -1,4 +1,4 @@
-package common
+package investigations
 
 import (
 	"context"
@@ -76,6 +76,8 @@ func TestCommitTimeout(t *testing.T) {
 			if commitErr == nil {
 				break
 			}
+
+			fmt.Println(commitErr.(mongo.CommandError).HasErrorLabel("UnknownTransactionCommitResult"))
 
 			if errors.Is(commitErr, context.DeadlineExceeded) {
 				fmt.Println("context deadline exceeded error")
