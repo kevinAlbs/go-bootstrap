@@ -7,7 +7,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"kevinalbs.com/go-bootstrap/util"
 
 	"context"
 	"time"
@@ -35,7 +34,17 @@ func main() {
 	}
 
 	coll := client.Database("test").Collection("coll")
-	doc := bson.D{{"x", 1}}
-	coll.InsertOne(ctx, doc)
-	fmt.Println("inserted", util.ToJson(doc), "into", coll.Name())
+	var result struct {
+		Value float64
+	}
+	filter := bson.D{{"name", "pi"}}
+	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	err = coll.FindOne(ctx, filter).Decode(&result)
+	if err == mongo.ErrNoDocuments {
+		// Do something when no record was found
+		fmt.Println("record does not exist")
+	} else {
+		log.Fatal(err)
+	}
 }
