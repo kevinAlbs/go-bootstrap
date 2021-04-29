@@ -1,0 +1,76 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+
+    <title>Go team sync!</title>
+    <meta name="description" content="">
+    <meta name="author" content="Kevin Albertson">
+
+    <style type="text/css">
+        #main {
+            width: 40%;
+            margin: 10px auto;
+        }
+        p, ul, input, button {
+            font-size: 16pt;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="main">
+        <p>Generate an order for the sync meeting.</p>
+        <p>Enter text to seed (leave empty to use the current day).</p>
+        <input type="text" id="seed" placeholder="Seed" /> <button id="generate">Generate</button>
+        <ul id="list"></ul>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+
+    <script>
+        const namelist = [
+            "Benji", "Divjot", "Isabella", "Kevin", "Matt"
+        ];
+
+        document.querySelector("#generate").addEventListener("click", generate);
+
+        function generate() {
+            let seed = document.querySelector("#seed").value;
+            let names = namelist.slice(0, namelist.length);
+
+            shuffle(names, seed);
+            let html = "";
+            for (let i = 0; i < names.length; i++) {
+                html += "<li>" + names[i] + "</li>";
+            }
+            document.querySelector("#list").innerHTML = html;
+        }
+
+        function swap(arr, src, dst) {
+            let tmp = arr[src];
+            arr[src] = arr[dst];
+            arr[dst] = tmp;
+        }
+
+        function shuffle(arr, seed) {
+            if (!seed) {
+                // Fall back to current day of the month.
+                seed = "" + (new Date().getDate());
+            }
+
+            let rng = new Math.seedrandom(seed);
+            for (let i = 0; i < arr.length; i++) {
+                swap(arr, i, Math.floor(rng.double() * arr.length));
+            }
+        }
+
+
+    </script>
+</body>
+
+</html>
