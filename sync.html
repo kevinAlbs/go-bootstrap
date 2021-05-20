@@ -27,28 +27,41 @@
         <p>Generate an order for the sync meeting.</p>
         <p>Enter text to seed (leave empty to use the current day).</p>
         <input type="text" id="seed" placeholder="Seed" /> <button id="generate">Generate</button>
-        <ul id="list"></ul>
+        <div id="c"></div>
+        <div id="go"></div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
 
     <script>
-        const namelist = [
-            "Benji", "Isabella", "Kevin", "Matt"
+        const namelist_c = [
+            "Kevin", "Roberto"
+        ];
+        const namelist_go = [
+            "Benji", "Isabella", "Matt"
         ];
 
         document.querySelector("#generate").addEventListener("click", generate);
 
         function generate() {
             let seed = document.querySelector("#seed").value;
-            let names = namelist.slice(0, namelist.length);
+            let names_go = namelist_go.slice(0, namelist_go.length);
+            let names_c = namelist_c.slice(0, namelist_c.length);
 
-            shuffle(names, seed);
-            let html = "";
-            for (let i = 0; i < names.length; i++) {
-                html += "<li>" + names[i] + "</li>";
+            shuffle(names_c, seed + "_c");
+            shuffle(names_go, seed + "_go");
+            let html_c = "<p>C / C++ team</p><ul>";
+            for (let i = 0; i < names_c.length; i++) {
+                html_c += "<li>" + names_c[i] + "</li>";
             }
-            document.querySelector("#list").innerHTML = html;
+            html_c += "</ul>";
+            document.querySelector("#c").innerHTML = html_c;
+            let html_go = "<p>Go team</p><ul>";
+            for (let i = 0; i < names_go.length; i++) {
+                html_go += "<li>" + names_go[i] + "</li>";
+            }
+            html_go += "</ul>";
+            document.querySelector("#go").innerHTML = html_go;
         }
 
         function swap(arr, src, dst) {
