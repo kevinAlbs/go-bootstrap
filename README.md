@@ -16,7 +16,10 @@ cd investigations
 go test -v -count=1 -run Test1777
 ```
 
-# FAQ #
+# Remember #
+- `waitQueueTimeoutMS` is not supported (because of context deadlines).
+
+# Q&A #
 
 ## How many connections are expected with a maxPoolSize=M ##
 
@@ -29,3 +32,11 @@ For Go driver 1.4.0+: max of `S * (2 + M)`.
 
 For Go driver < 1.4.0: max of `S * (1 + M)`.
 - Note, there was a bug fix for maxPoolSize in 1.3.5: https://jira.mongodb.org/browse/GODRIVER-1613
+
+## Is it safe to call mongo.Client.Connect() after mongo.Client.Disconnect() ?
+No, you will get a `server is closed` error. See investigations/connect_after_disconnect.
+
+## Why aren't types like Client/Database/Collection interfaces?
+
+The main hesitation around exposing an interface is backwards compatibility.
+We haven't made the Client/Database/Collection types interfaces despite multiple user requests to do so. For struct types, the only breaking changes are removing existing functions or changing function signatures. We can add new functions whenever we want. For interfaces, though, even adding functions is a breaking change because we're technically breaking all external implementations by doing so.

@@ -1,50 +1,34 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"context"
-	"time"
 )
 
-func doPing(ctx context.Context, client *mongo.Client) error {
-	err := client.Ping(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("db error: %w", err)
-	}
-	return nil
-}
-
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	opts := options.Client()
-	// Uncomment to enable logging of all commands and replies.
-	// opts.SetMonitor(util.CreateMonitor())
-
-	client, err := mongo.Connect(ctx, opts)
+	uri := "foo"
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("connect error: %v", err)
 	}
 
-	coll := client.Database("test").Collection("coll")
-	var result struct {
-		Value float64
+	for {
+		db := client.Database("test")
+		res := db.RunCommand(context.Background(), bson.D{{"ping", 1}})
+		var reply bson.D
+		res.Decode(&reply)
+		replyStr, err := bson.MarshalExtJSON(reply, false, false)
+		if err != nil {
+			fmt.Printf("err : %v\n", err)
+		}
+		fmt.Printf("res : %v\n", string(replyStr))
+		time.Sleep(10 * time.Second)
 	}
-	filter := bson.D{{"name", "pi"}}
-	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	err = coll.FindOne(ctx, filter).Decode(&result)
-	if err == mongo.ErrNoDocuments {
-		// Do something when no record was found
-		fmt.Println("record does not exist")
-	} else {
-		log.Fatal(err)
-	}
+
 }

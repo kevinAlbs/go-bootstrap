@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func getExampleKMSProviders() map[string]map[string]interface{} {
+func GetExampleKMSProviders() map[string]map[string]interface{} {
 	var kmsProviders map[string]map[string]interface{}
 	const filename = "/Users/kevin.albertson/.csfle/kms_providers.json"
 
@@ -34,8 +34,8 @@ func getExampleKMSProviders() map[string]map[string]interface{} {
 	return kmsProviders
 }
 
-// getExampleSchemaMap gets a schema map to encrypt "secret" on "db.coll". It uses a key with the altname "example" (or creates one if it does not exist).
-func getExampleSchemaMap() map[string]interface{} {
+// GetExampleSchemaMap gets a schema map to encrypt "secret" on "db.coll". It uses a key with the altname "example" (or creates one if it does not exist).
+func GetExampleSchemaMap() map[string]interface{} {
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb://localhost:27017/"))
 	if err != nil {
 		log.Fatal(err)
@@ -47,7 +47,7 @@ func getExampleSchemaMap() map[string]interface{} {
 	var keyid primitive.Binary
 	if res.Err() == mongo.ErrNoDocuments {
 		fmt.Println("key with keyAltNames:example not found, creating!")
-		ceopts := options.ClientEncryption().SetKmsProviders(getExampleKMSProviders()).SetKeyVaultNamespace("keyvault.datakeys")
+		ceopts := options.ClientEncryption().SetKmsProviders(GetExampleKMSProviders()).SetKeyVaultNamespace("keyvault.datakeys")
 		ce, err := mongo.NewClientEncryption(client, ceopts)
 		if err != nil {
 			log.Fatal(err)
