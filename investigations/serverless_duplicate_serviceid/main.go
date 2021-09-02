@@ -81,4 +81,8 @@ func main() {
 	for _, serviceID := range findServiceIDs {
 		fmt.Println(serviceID)
 	}
+	// Sample output:
+	// captured the following serviceIDs on the 'find' commands
+	// 6127bde11b3bb25a4ac842f8
+	// 6127bde11b3bb25a4ac842f8
 }
