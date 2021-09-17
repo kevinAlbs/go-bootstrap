@@ -34,7 +34,12 @@ func main() {
 	wg.Add(1)
 	go func() {
 		for {
-			client.Database("test").RunCommand(context.TODO(), bson.D{{"ping", 1}})
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			res := client.Database("test").RunCommand(ctx, bson.D{{"ping", 1}})
+			if res.Err() != nil {
+				log.Fatal(res.Err())
+			}
 			log.Printf("iteration %v", iteration)
 			time.Sleep(5 * time.Second)
 			iteration++
