@@ -2,7 +2,7 @@ package util
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -14,11 +14,11 @@ func logCommandStarted(context context.Context, event *event.CommandStartedEvent
 }
 
 func logCommandSucceeded(context context.Context, event *event.CommandSucceededEvent) {
-	fmt.Println("<= CommandSucceeded:", event.CommandName, ToJson(event.Reply))
+	log.Println("<= CommandSucceeded:", event.CommandName, ToJson(event.Reply))
 }
 
 func logCommandFailed(context context.Context, event *event.CommandFailedEvent) {
-	fmt.Println("<= CommandFailed:", event.CommandName, event.Failure)
+	log.Println("<= CommandFailed:", event.CommandName, event.Failure)
 }
 
 func ToJson(v interface{}) string {
@@ -31,4 +31,16 @@ func ToJson(v interface{}) string {
 
 func CreateMonitor() *event.CommandMonitor {
 	return &event.CommandMonitor{logCommandStarted, logCommandSucceeded, logCommandFailed}
+}
+
+func logPoolEvent(event *event.PoolEvent) {
+	asJson, err := json.Marshal(event)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("PoolEvent: %v ", string(asJson))
+}
+
+func CreatePoolMonitor() *event.PoolMonitor {
+	return &event.PoolMonitor{logPoolEvent}
 }
