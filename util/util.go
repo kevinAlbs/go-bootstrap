@@ -38,9 +38,41 @@ func logPoolEvent(event *event.PoolEvent) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("PoolEvent: %v ", string(asJson))
+	log.Printf("PoolEvent: %v\n", string(asJson))
 }
 
 func CreatePoolMonitor() *event.PoolMonitor {
 	return &event.PoolMonitor{logPoolEvent}
+}
+
+func serverDescriptionChanged(event *event.ServerDescriptionChangedEvent) {
+	log.Printf("ServerDescriptionChangedEvent: %v, %v => %v\n", event.Address, event.PreviousDescription.Kind, event.NewDescription.Kind)
+}
+func serverOpening(event *event.ServerOpeningEvent) {
+	log.Println("ServerOpeningEvent", event)
+}
+func serverClosed(event *event.ServerClosedEvent) {
+	log.Printf("ServerClosedEvent", event)
+}
+func topologyDescriptionChanged(event *event.TopologyDescriptionChangedEvent) {
+	log.Printf("TopologyDescriptionChangedEvent: %v => %v\n", event.PreviousDescription.Kind, event.NewDescription.Kind)
+}
+func topologyOpening(event *event.TopologyOpeningEvent) {
+	log.Println("TopologyOpeningEvent")
+}
+func topologyClosed(event *event.TopologyClosedEvent) {
+	log.Println("TopologyClosedEvent")
+}
+func serverHeartbeatStarted(event *event.ServerHeartbeatStartedEvent) {
+	log.Println("ServerHeartbeatStartedEvent", event)
+}
+func serverHeartbeatSucceeded(event *event.ServerHeartbeatSucceededEvent) {
+	log.Println("ServerHeartbeatSucceededEvent", event)
+}
+func serverHeartbeatFailed(event *event.ServerHeartbeatFailedEvent) {
+	log.Println("ServerHeartbeatFailedEvent", event)
+}
+
+func CreateServerMonitor() *event.ServerMonitor {
+	return &event.ServerMonitor{serverDescriptionChanged, serverOpening, serverClosed, topologyDescriptionChanged, topologyOpening, topologyClosed, serverHeartbeatStarted, serverHeartbeatSucceeded, serverHeartbeatFailed}
 }
