@@ -18,7 +18,10 @@ func main() {
 	if uri = os.Getenv("MONGODB_URI"); uri == "" {
 		log.Fatal("You must set your 'MONGODB_URI' environmental variable.")
 	}
-	opts := options.Client().ApplyURI(uri).SetPoolMonitor(util.CreatePoolMonitor()).SetMonitor(util.CreateMonitor())
+	opts := options.Client().ApplyURI(uri).
+		SetPoolMonitor(util.CreatePoolMonitor()).
+		SetMonitor(util.CreateMonitor()).
+		SetServerMonitor(util.CreateServerMonitor())
 
 	client, err := mongo.Connect(context.TODO(), opts)
 	if err != nil {
@@ -34,9 +37,14 @@ func main() {
 	wg.Add(1)
 	go func() {
 		for {
-			client.Database("test").RunCommand(context.TODO(), bson.D{{"ping", 1}})
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			res := client.Database("test").RunCommand(ctx, bson.D{{"ping", 1}})
+			if res.Err() != nil {
+				log.Fatal(res.Err())
+			}
 			log.Printf("iteration %v", iteration)
-			time.Sleep(5 * time.Second)
+			time.Sleep(1 * time.Second)
 			iteration++
 		}
 		wg.Done()
