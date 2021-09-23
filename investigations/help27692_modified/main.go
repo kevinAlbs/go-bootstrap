@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -15,8 +16,13 @@ import (
 
 func main() {
 	var uri string
+	var runOnce bool
 	if uri = os.Getenv("MONGODB_URI"); uri == "" {
 		log.Fatal("You must set your 'MONGODB_URI' environmental variable.")
+	}
+	if os.Getenv("RUN_ONCE") == "ON" {
+		fmt.Println("Only running one iteration")
+		runOnce = true
 	}
 	opts := options.Client().ApplyURI(uri).
 		SetPoolMonitor(util.CreatePoolMonitor()).
@@ -46,6 +52,9 @@ func main() {
 			log.Printf("iteration %v", iteration)
 			time.Sleep(1 * time.Second)
 			iteration++
+			if runOnce {
+				break
+			}
 		}
 		wg.Done()
 	}()
