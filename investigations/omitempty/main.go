@@ -1,6 +1,5 @@
 // Run with:
-// export MONGODB_URI="<URI to a serverless instance>"
-// go run ./investigations/serverless_listcollections_batchsize
+// go run ./investigations/omitempty/main.go
 
 package main
 
