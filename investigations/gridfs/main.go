@@ -1,5 +1,12 @@
 package main
 
+// To run: go run investigations/gridfs/main.go
+// Then, use the MongoDB shell to observe files:
+// $ mongosh
+// $ use db
+// $ show collections
+// $ db.fs.files.find()
+
 import (
 	"context"
 
