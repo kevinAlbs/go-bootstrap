@@ -49,13 +49,13 @@ This differs from the URI options spec, which suggests 10 seconds.
 
 ## When was Go driver v1.x released?
 
-tag                                                                               date
---------------------------------------------------------------------------------  ----------
-[v1.7.0](https://api.github.com/repos/mongodb/mongo-go-driver/releases/46498265)  2021-07-20
-[v1.6.0](https://api.github.com/repos/mongodb/mongo-go-driver/releases/46072524)  2021-07-12
-[v1.5.0](https://api.github.com/repos/mongodb/mongo-go-driver/releases/39536658)  2021-03-09
-[v1.4.0](https://api.github.com/repos/mongodb/mongo-go-driver/releases/29127200)  2020-07-30
-[v1.3.0](https://api.github.com/repos/mongodb/mongo-go-driver/releases/23415933)  2020-02-05
-[v1.2.0](https://api.github.com/repos/mongodb/mongo-go-driver/releases/22120596)  2019-12-10
-[v1.1.0](https://api.github.com/repos/mongodb/mongo-go-driver/releases/19232847)  2019-08-13
-[v1.0.0](https://api.github.com/repos/mongodb/mongo-go-driver/releases/16098456)  2019-03-13
+| tag                                                                      | date       |
+|--------------------------------------------------------------------------|------------|
+| [v1.7.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.7.0) | 2021-07-20 |
+| [v1.6.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.6.0) | 2021-07-12 |
+| [v1.5.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.5.0) | 2021-03-09 |
+| [v1.4.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.4.0) | 2020-07-30 |
+| [v1.3.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.3.0) | 2020-02-05 |
+| [v1.2.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.2.0) | 2019-12-10 |
+| [v1.1.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.1.0) | 2019-08-13 |
+| [v1.0.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.0.0) | 2019-03-13 |

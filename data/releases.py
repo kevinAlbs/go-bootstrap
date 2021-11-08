@@ -14,8 +14,8 @@ for release in r.json():
     if not re.match(r"v[1-9]+\.[0-9]+\.0$", release["tag_name"]):
         continue
     data.append({
-        "tag": "[{}]({})".format(release["tag_name"], release["url"]),
+        "tag": "[{}]({})".format(release["tag_name"], release["html_url"]),
         "date": release["created_at"].split("T")[0]
     })
 
-print (tabulate.tabulate (data, headers="keys", tablefmt="markdown"))
+print (tabulate.tabulate (data, headers="keys", tablefmt="github"))
