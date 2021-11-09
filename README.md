@@ -59,3 +59,12 @@ This differs from the URI options spec, which suggests 10 seconds.
 | [v1.2.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.2.0) | 2019-12-10 |
 | [v1.1.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.1.0) | 2019-08-13 |
 | [v1.0.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.0.0) | 2019-03-13 |
+
+# Which of the index APIs is implemented?
+
+There are three index APIs in mongodb/specifications:
+- Enumerate Indexes
+- Standard API
+- Index View API
+
+The Go driver implements the Index View API. GODRIVER-31 decided not to implement the Enumerate Indexes API.
