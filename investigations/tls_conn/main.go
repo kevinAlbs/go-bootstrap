@@ -1,6 +1,6 @@
-// This was run with: go version go1.17.2 darwin/amd64
-// File name: tls_conn/main.go
-// Run with: go run ./tls_conn/main.go
+// Example of connecting to a PyKMIP server with TLS.
+// `go version` output: go version go1.17.2 darwin/amd64
+// Run with: go run ./investigations/tls_conn/main.go
 package main
 
 import (
