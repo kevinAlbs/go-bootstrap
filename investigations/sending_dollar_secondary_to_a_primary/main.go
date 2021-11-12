@@ -14,7 +14,7 @@ import (
 func main() {
 	var uri string
 	if uri = os.Getenv("MONGODB_URI"); uri == "" {
-		uri = "mongodb://localhost:27017"
+		uri = "mongodb://localhost:27017/?directConnection=true"
 	}
 	rp := readpref.Secondary()
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri).SetMonitor(util.CreateMonitor()))
