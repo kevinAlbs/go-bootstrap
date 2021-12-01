@@ -41,6 +41,12 @@ No, you will get a `server is closed` error. See investigations/connect_after_di
 The main hesitation around exposing an interface is backwards compatibility.
 We haven't made the Client/Database/Collection types interfaces despite multiple user requests to do so. For struct types, the only breaking changes are removing existing functions or changing function signatures. We can add new functions whenever we want. For interfaces, though, even adding functions is a breaking change because we're technically breaking all external implementations by doing so.
 
+This is frequently requested to make mocking Go driver types easier.
+
+The Go wiki doc https://github.com/golang/go/wiki/CodeReviewComments#interfaces advises against interfaces in the API for mocking.
+
+> Do not define interfaces on the implementor side of an API 'for mocking'; instead, design the API so that it can be tested using the public API of the real implementation.
+
 ## What is the default value of connectTimeoutMS?
 
 [30 seconds](https://github.com/kevinAlbs/mongo-go-driver/blob/cdacb6473abf8f2abaac11f58b7577fbd148440e/x/mongo/driver/topology/connection_options.go#L60)
