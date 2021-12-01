@@ -57,6 +57,7 @@ This differs from the URI options spec, which suggests 10 seconds.
 
 | tag                                                                      | date       |
 |--------------------------------------------------------------------------|------------|
+| [v1.8.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.8.0) | 2021-11-23 |
 | [v1.7.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.7.0) | 2021-07-20 |
 | [v1.6.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.6.0) | 2021-07-12 |
 | [v1.5.0](https://github.com/mongodb/mongo-go-driver/releases/tag/v1.5.0) | 2021-03-09 |
