@@ -19,7 +19,6 @@ def init_state (connid):
         "state": "",
         "authed": False,
         "from_automation_agent": False,
-        "history": [],
         "accepted": False
     }
 
@@ -52,7 +51,6 @@ with open (logpath, "r") as logfile:
                 raise Exception ("Expected connection {} not to be in conn_states, but got {}".format(connid, conn_states[connid]))
             init_state (connid)
             conn_states[connid]["state"] = "Connection accepted"
-            conn_states[connid]["history"].append(rawline)
             conn_states[connid]["accepted"] = True
             conn_accepted += 1
             continue
@@ -60,7 +58,6 @@ with open (logpath, "r") as logfile:
         if line["msg"] == "client metadata":
             connid = line["ctx"]
             check_state (connid, "Connection accepted")
-            conn_states[connid]["history"].append(rawline)
             conn_states[connid]["state"] = "client metadata"
             if line["attr"]["doc"]["application"]["name"].startswith("MongoDB Automation Agent v11.8.1.7231"):
                 conn_states[connid]["from_automation_agent"] = True
@@ -69,7 +66,6 @@ with open (logpath, "r") as logfile:
         if line["msg"] == "Authentication succeeded":
             connid = line["ctx"]
             check_state (connid, "client metadata")
-            conn_states[connid]["history"].append(rawline)
             conn_states[connid]["state"] = "Authentication succeeded"
             conn_states[connid]["authed"] = True
             if conn_states[connid]["from_automation_agent"]:
@@ -79,7 +75,6 @@ with open (logpath, "r") as logfile:
         if line["msg"] == "Connection ended":
             connid = line["ctx"]
             check_state (connid, "Connection accepted", "client metadata", "Authentication succeeded")
-            conn_states[connid]["history"].append(rawline)
             conn_ended += 1
             if conn_states[connid]["authed"] and conn_states[connid]["from_automation_agent"]:
                 automation_agent_conn_authed_ended += 1
