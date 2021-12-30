@@ -1,8 +1,9 @@
 """
-Q: How many authenticated connections from the Automation Agent are opened and closed in the mongos logs included in HELP-29818?
-A: 
+Q: How many authenticated connections from the Automation Agent are accepted and ended in the mongos logs included in HELP-29818?
+A: 295
 """
 import json
+import datetime
 
 logpath = "./help29818_logs/atlas-b3e2ep-shard-00-00.azg38.mongodb.net/mongos/27016/mongodb/mongodb.log"
 
@@ -11,15 +12,15 @@ conn_accepted = 0
 conn_ended = 0
 automation_agent_conn_authed = 0
 automation_agent_conn_authed_ended = 0
-
 automation_agent_conn_authed_accepted_and_ended = 0
+automation_agent_conn_authed_accepted_and_ended_durations = []
 
 def init_state (connid):
     conn_states[connid] = {
         "state": "",
         "authed": False,
         "from_automation_agent": False,
-        "accepted": False
+        "time_accepted": None
     }
 
 def check_state (connid, *expected_states):
@@ -33,14 +34,11 @@ def check_state (connid, *expected_states):
     if conn_states[connid]["state"] not in expected_states:
         raise Exception ("Expected connection {} to be in one of states: {} but got {}".format(connid, expected_states, conn_states[connid]["state"]))
 
-lineno = 1
-
 with open (logpath, "r") as logfile:
     for rawline in logfile:
         if rawline.strip() == "":
             continue
-    
-        lineno += 1
+
         line = json.loads(rawline)
         if line["msg"] == "***** SERVER RESTARTED *****":
             print ("See log line '{}'. Resetting connection states".format(line["msg"]))
@@ -52,6 +50,7 @@ with open (logpath, "r") as logfile:
             init_state (connid)
             conn_states[connid]["state"] = "Connection accepted"
             conn_states[connid]["accepted"] = True
+            conn_states[connid]["time_accepted"] = datetime.datetime.fromisoformat(line["t"]["$date"])
             conn_accepted += 1
             continue
 
@@ -80,6 +79,9 @@ with open (logpath, "r") as logfile:
                 automation_agent_conn_authed_ended += 1
                 if conn_states[connid]["accepted"]:
                     automation_agent_conn_authed_accepted_and_ended += 1
+                    time_ended = datetime.datetime.fromisoformat (line["t"]["$date"])
+                    duration = time_ended - conn_states[connid]["time_accepted"]
+                    automation_agent_conn_authed_accepted_and_ended_durations.append(duration.total_seconds())
             del conn_states[connid]
             continue
 
@@ -88,13 +90,27 @@ print ("conn_ended={}".format(conn_ended))
 print ("automation_agent_conn_authed={}".format(automation_agent_conn_authed))
 print ("automation_agent_conn_authed_ended={}".format(automation_agent_conn_authed_ended))
 print ("automation_agent_conn_authed_accepted_and_ended={}".format(automation_agent_conn_authed_accepted_and_ended))
+avg = sum(automation_agent_conn_authed_accepted_and_ended_durations) / len (automation_agent_conn_authed_accepted_and_ended_durations)
+automation_agent_conn_authed_accepted_and_ended_durations.sort()
+median = automation_agent_conn_authed_accepted_and_ended_durations[len(automation_agent_conn_authed_accepted_and_ended_durations) // 2]
+print ("automation_agent_conn_authed_accepted_and_ended_durations average: {}".format(avg))
+print ("automation_agent_conn_authed_accepted_and_ended_durations median: {}".format(median))
 
 """
 Output:
+conn_accepted=2271
+conn_ended=2223
+automation_agent_conn_authed=354
+automation_agent_conn_authed_ended=295
+automation_agent_conn_authed_accepted_and_ended=295
+automation_agent_conn_authed_accepted_and_ended_durations average: 62.94652881355929
+automation_agent_conn_authed_accepted_and_ended_durations median: 1.05
 
-
+Interpretation:
 First log line includes this timestamp: 2021-12-24T17:07:04.834+00:00
 Last log line includes this timestamp:  2021-12-24T17:58:20.486+00:00
 Time span is about 50 minutes, or 3000 seconds.
-Observed about 300 application connections created / closed.
+Majority of application connections from Automation Agent are short lived (~1 second).
+Observed ~300 application connections created / closed from Automation Agent.
+Suggests that Automation Agent is creating short-lived mongo.Clients.
 """
