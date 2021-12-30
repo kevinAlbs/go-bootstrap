@@ -20,7 +20,8 @@ def init_state (connid):
         "state": "",
         "authed": False,
         "from_automation_agent": False,
-        "time_accepted": None
+        "time_accepted": None,
+        "history": []
     }
 
 def check_state (connid, *expected_states):
@@ -48,6 +49,7 @@ with open (logpath, "r") as logfile:
             if connid in conn_states:
                 raise Exception ("Expected connection {} not to be in conn_states, but got {}".format(connid, conn_states[connid]))
             init_state (connid)
+            conn_states[connid]["history"].append (rawline)
             conn_states[connid]["state"] = "Connection accepted"
             conn_states[connid]["accepted"] = True
             conn_states[connid]["time_accepted"] = datetime.datetime.fromisoformat(line["t"]["$date"])
@@ -57,6 +59,7 @@ with open (logpath, "r") as logfile:
         if line["msg"] == "client metadata":
             connid = line["ctx"]
             check_state (connid, "Connection accepted")
+            conn_states[connid]["history"].append (rawline)
             conn_states[connid]["state"] = "client metadata"
             if line["attr"]["doc"]["application"]["name"].startswith("MongoDB Automation Agent v11.8.1.7231"):
                 conn_states[connid]["from_automation_agent"] = True
@@ -65,6 +68,7 @@ with open (logpath, "r") as logfile:
         if line["msg"] == "Authentication succeeded":
             connid = line["ctx"]
             check_state (connid, "client metadata")
+            conn_states[connid]["history"].append (rawline)
             conn_states[connid]["state"] = "Authentication succeeded"
             conn_states[connid]["authed"] = True
             if conn_states[connid]["from_automation_agent"]:
@@ -74,6 +78,7 @@ with open (logpath, "r") as logfile:
         if line["msg"] == "Connection ended":
             connid = line["ctx"]
             check_state (connid, "Connection accepted", "client metadata", "Authentication succeeded")
+            conn_states[connid]["history"].append (rawline)
             conn_ended += 1
             if conn_states[connid]["authed"] and conn_states[connid]["from_automation_agent"]:
                 automation_agent_conn_authed_ended += 1
@@ -81,6 +86,11 @@ with open (logpath, "r") as logfile:
                     automation_agent_conn_authed_accepted_and_ended += 1
                     time_ended = datetime.datetime.fromisoformat (line["t"]["$date"])
                     duration = time_ended - conn_states[connid]["time_accepted"]
+                    if connid[4] != '4' and connid[4] != '5' and duration.total_seconds() < 1.5:
+                        print ("check out connection: {}".format(connid))
+                        print ("".join(conn_states[connid]["history"]))
+                        import sys
+                        sys.exit(1)
                     automation_agent_conn_authed_accepted_and_ended_durations.append(duration.total_seconds())
             del conn_states[connid]
             continue
