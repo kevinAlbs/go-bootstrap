@@ -7,7 +7,7 @@ require (
 	github.com/jamiealquiza/tachymeter v2.0.0+incompatible
 	github.com/kr/pretty v0.1.0
 	github.com/stretchr/testify v1.6.1
-	go.mongodb.org/mongo-driver v1.5.3
+	go.mongodb.org/mongo-driver v1.8.1
 )
 
 replace go.mongodb.org/mongo-driver => /Users/kevin.albertson/code/mongo-go-driver
