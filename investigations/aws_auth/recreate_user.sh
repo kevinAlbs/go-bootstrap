@@ -1,0 +1,1 @@
+mongosh --username user --password password ./recreate_user.js
