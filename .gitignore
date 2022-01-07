@@ -2,3 +2,4 @@ bootstrap
 menv
 .menv
 connection_pool
+.DS_Store
