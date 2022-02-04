@@ -1,4 +1,6 @@
-// This is a simplified HTTP service with three endpoints:
+// This is a simplified HTTP service.
+// The service wants to guarantee that each endpoint responds within 1 second or errors.
+// There are three endpoints:
 // /chatPost/?msg=foo to post a chat message.
 // /chatGet to get the full chat.
 // /chatClear to clear the chat.
