@@ -79,3 +79,8 @@ The Go driver implements the Index View API. GODRIVER-31 decided not to implemen
 # What is the process for the Cloud team requesting backports?
 
 https://jira.mongodb.org/browse/CLOUDP-96157
+# Does the Go driver generate deprecated UUID (subtype 3)? #
+Yes.
+
+See https://bsonspec.org/spec.html.
+See ./investigations/legacy_uuid
