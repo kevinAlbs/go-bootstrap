@@ -10,7 +10,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"kevinalbs.com/go-bootstrap/util"
 )
 
 func main() {
@@ -18,7 +17,7 @@ func main() {
 	if uri = os.Getenv("MONGODB_URI"); uri == "" {
 		uri = "mongodb://localhost:27017"
 	}
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri).SetMonitor(util.CreateMonitor()))
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
 		panic(err)
 	}
@@ -50,5 +49,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("created key with a UUID: %v", keyid)
+	fmt.Printf("created key with a UUID: %x", keyid)
 }
