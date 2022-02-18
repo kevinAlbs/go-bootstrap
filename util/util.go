@@ -29,8 +29,19 @@ func ToJson(v interface{}) string {
 	return string(bytes)
 }
 
-func CreateMonitor() *event.CommandMonitor {
-	return &event.CommandMonitor{logCommandStarted, logCommandSucceeded, logCommandFailed}
+type MonitorOpts struct {
+	StartedOnly bool
+}
+
+func CreateMonitor(opts ...*MonitorOpts) *event.CommandMonitor {
+	var mopts MonitorOpts
+	for _, mopt := range opts {
+		mopts.StartedOnly = mopt.StartedOnly
+	}
+	if mopts.StartedOnly {
+		return &event.CommandMonitor{Started: logCommandStarted}
+	}
+	return &event.CommandMonitor{Started: logCommandStarted, Succeeded: logCommandSucceeded, Failed: logCommandFailed}
 }
 
 func logPoolEvent(event *event.PoolEvent) {
