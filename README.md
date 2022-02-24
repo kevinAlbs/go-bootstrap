@@ -84,3 +84,12 @@ Yes.
 
 See https://bsonspec.org/spec.html.
 See ./investigations/legacy_uuid
+
+# Is there a guide for migrating from mgo to the mongo-go-driver? #
+
+https://www.mongodb.com/blog/post/go-migration-guide
+But it was last updated in 2019 (pending https://jira.mongodb.org/browse/WEBSITE-11912)
+
+# What version of the MongoDB server does globalsign/mgo support? #
+
+I would not recommend using mgo with server version 4.0+. The README from the github.com/globalsign/mgo repo says support for “MongoDB 4.0 is currently experimental”.
