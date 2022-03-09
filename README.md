@@ -93,3 +93,11 @@ But it was last updated in 2019 (pending https://jira.mongodb.org/browse/WEBSITE
 # What version of the MongoDB server does globalsign/mgo support? #
 
 I would not recommend using mgo with server version 4.0+. The README from the github.com/globalsign/mgo repo says support for “MongoDB 4.0 is currently experimental”.
+
+# What are other drivers to compare against? #
+
+Consider these:
+- https://github.com/lib/pq - Postgres driver for Go database/sql package.
+- https://pkg.go.dev/database/sql - the Go SQL database API
+- https://github.com/arangodb/go-driver - the Go driver for ArangoDB
+- https://docs.aws.amazon.com/sdk-for-go/api/service/dynamodb/ - Go AWS SDK for DynamoDB
