@@ -101,3 +101,8 @@ Consider these:
 - https://pkg.go.dev/database/sql - the Go SQL database API
 - https://github.com/arangodb/go-driver - the Go driver for ArangoDB
 - https://docs.aws.amazon.com/sdk-for-go/api/service/dynamodb/ - Go AWS SDK for DynamoDB
+
+# [OPEN] Q12 Are the same operations grouped in an unordered bulk write? #
+For example, if an unordered bulk write is done with InsertOne, UpdateOne, InsertOne, does the driver re-order the InsertOne operations to group them? Specifically, which case does the driver do?
+1. Send two operations: one "insert" and one "update"?
+2. Send three operations: one "insert", one "update", and one "insert"?
