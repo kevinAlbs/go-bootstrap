@@ -49,7 +49,7 @@ func main() {
 		uri = "mongodb://localhost:27017"
 	}
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri).SetPoolMonitor(CreatePoolMonitor()))
-	defer client.Disconnect(context.Background())
+	defer client.Disconnect(context.TODO())
 	if err != nil {
 		panic(err)
 	}
