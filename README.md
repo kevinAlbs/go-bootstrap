@@ -106,3 +106,8 @@ Consider these:
 For example, if an unordered bulk write is done with InsertOne, UpdateOne, InsertOne, does the driver re-order the InsertOne operations to group them? Specifically, which case does the driver do?
 1. Send two operations: one "insert" and one "update"?
 2. Send three operations: one "insert", one "update", and one "insert"?
+
+# Q13 What is considered a backwards breaking change in the Go driver?
+
+- Changing an option from `string` to `interface{}`. This was considered and rejected as part of GODRIVER-2386. Here is an example why: https://go.dev/play/p/L3PXOxlWw9i
+- Adding variadic options to a function. This was considered and rejected as part of GODRIVER-2391. Here is an [explanation why](https://github.com/mongodb/mongo-go-driver/pull/913#discussion_r868032541).
