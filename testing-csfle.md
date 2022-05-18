@@ -75,3 +75,11 @@ go test -tags cse -v -count=1 ./mongo/integration -run TestClientSideEncryptionS
 ```
 
 If headers change, use `go clean -cache -testcache`.
+
+Passing environment variables to `-exec` may be required. Example:
+```
+go test -v \                                     
+    -tags cse \  
+    -exec "env PKG_CONFIG_PATH=/install/libmongocrypt/lib/pkgconfig DYLD_LIBRARY_PATH=/install/libmongocrypt/lib LD_LIBRARY_PATH=/install/libmongocrypt/lib" \
+    -run ^TestConfigureAutoEncryption
+```
