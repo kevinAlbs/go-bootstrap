@@ -73,3 +73,5 @@ export LD_LIBRARY_PATH=/install/libmongocrypt/lib
 
 go test -tags cse -v -count=1 ./mongo/integration -run TestClientSideEncryptionSpec/basic
 ```
+
+If headers change, use `go clean -cache -testcache`.
