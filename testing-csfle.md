@@ -41,6 +41,18 @@ go test -tags cse -v -count=1 ./mongo/integration -run TestClientSideEncryptionS
 
 
 # Q & A
+## Q4: How to I get Visual Studio Code autocomplete working with libmongocrypt?
+Add this to settings:
+
+```json
+"go.buildTags": "cse",
+"go.toolsEnvVars": {
+    "PKG_CONFIG_PATH": "/Users/matt.dale/Work/libmongocrypt/lib/pkgconfig",
+    "DYLD_LIBRARY_PATH": "/Users/matt.dale/Work/libmongocrypt/lib",
+    "LD_LIBRARY_PATH": "/Users/matt.dale/Work/libmongocrypt/lib"
+}
+```
+
 ## Q3: How do I test with the `csfle` shared library?
 libmongocrypt 1.5.0 supports the `csfle` shared library to replace the `mongocryptd` process.
 
