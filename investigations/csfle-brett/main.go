@@ -79,8 +79,12 @@ func createClient(c string) (*mongo.Client, error) {
 	return client, nil
 }
 
-func createManualEncryptionClient(c *mongo.Client, kp map[string]map[string]interface{}, kns string) (*mongo.ClientEncryption, error) {
+// The caller is expected to call Close() on the returned mongo.ClientEncryption()
+func createManualEncryptionClient(connectionString string, kp map[string]map[string]interface{}, kns string) (*mongo.ClientEncryption, error) {
 	o := options.ClientEncryption().SetKeyVaultNamespace(kns).SetKmsProviders(kp)
+	// Create a separate mongo.Client for the mongo.ClientEncryption.
+	// Calling ClientEncryption.Close() will call Client.Disconnect().
+	c, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(connectionString))
 	client, err := mongo.NewClientEncryption(c, o)
 	if err != nil {
 		return nil, err
@@ -206,7 +210,7 @@ func main() {
 	}
 	dek = findResult["_id"].(primitive.Binary)
 
-	clientEncryption, err = createManualEncryptionClient(client, kmsProvider, keySpace)
+	clientEncryption, err = createManualEncryptionClient(connectionString, kmsProvider, keySpace)
 	if err != nil {
 		fmt.Printf("ClientEncrypt error: %s\n", err)
 		exitCode = 1
