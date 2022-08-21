@@ -3,6 +3,8 @@ module kevinalbs.com/go-bootstrap
 go 1.15
 
 require (
+	github.com/aws/aws-sdk-go-v2/config v1.17.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.16.13 // indirect
 	github.com/bxcodec/faker v2.0.1+incompatible
 	github.com/jamiealquiza/tachymeter v2.0.0+incompatible
 	github.com/kr/pretty v0.1.0
