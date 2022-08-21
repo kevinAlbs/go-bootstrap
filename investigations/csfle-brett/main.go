@@ -85,7 +85,6 @@ func createManualEncryptionClient(c *mongo.Client, kp map[string]map[string]inte
 	if err != nil {
 		return nil, err
 	}
-	defer func() { _ = client.Close(context.TODO()) }()
 
 	return client, nil
 }
@@ -181,6 +180,7 @@ func main() {
 		exitCode = 1
 		return
 	}
+	defer func() { _ = clientEncryption.Close(context.TODO()) }()
 
 	payload := bson.D{
 		{Key: "_id", Value: 2315},
