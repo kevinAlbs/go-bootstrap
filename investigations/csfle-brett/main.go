@@ -20,7 +20,13 @@ type SchemaSlice struct {
 	random        [][]string
 }
 
-func getAWSToken() (*sts.AssumeRoleOutput, error) {
+type AWSCredentials struct {
+	AccessKeyId     *string
+	SecretAccessKey *string
+	SessionToken    *string
+}
+
+func getAWSToken() (*AWSCredentials, error) {
 	cfg, err := config.LoadDefaultConfig(
 		context.TODO(),
 		config.WithSharedConfigProfile("Services.User-331472312345"),
@@ -45,7 +51,22 @@ func getAWSToken() (*sts.AssumeRoleOutput, error) {
 		return nil, err
 	}
 
-	return result, nil
+	return &AWSCredentials{
+		AccessKeyId:     result.Credentials.AccessKeyId,
+		SecretAccessKey: result.Credentials.SecretAccessKey,
+		SessionToken:    result.Credentials.SessionToken,
+	}, nil
+}
+
+func getAWSCredentialsFromEnv() (*AWSCredentials, error) {
+	accessKeyId := os.Getenv("CSFLE_AWS_TEMP_ACCESS_KEY_ID")
+	secretAccessKey := os.Getenv("CSFLE_AWS_TEMP_SECRET_ACCESS_KEY")
+	sessionToken := os.Getenv("CSFLE_AWS_TEMP_SESSION_TOKEN")
+	return &AWSCredentials{
+		AccessKeyId:     &accessKeyId,
+		SecretAccessKey: &secretAccessKey,
+		SessionToken:    &sessionToken,
+	}, nil
 }
 
 func createClient(c string) (*mongo.Client, error) {
@@ -107,7 +128,7 @@ func main() {
 	var (
 		kmsProvider      map[string]map[string]interface{}
 		keySpace         = "__secret.__keyvault"
-		connectionString = "mongodb://localhost:29017"
+		connectionString = "mongodb://localhost:27017"
 		clientEncryption *mongo.ClientEncryption
 		client           *mongo.Client
 		exitCode         = 0
@@ -120,7 +141,8 @@ func main() {
 		os.Exit(exitCode)
 	}()
 
-	role, err := getAWSToken()
+	// role, err := getAWSToken()
+	role, err := getAWSCredentialsFromEnv()
 	if err != nil {
 		fmt.Printf("Token error: %s\n", err)
 		exitCode = 1
@@ -129,9 +151,9 @@ func main() {
 
 	kmsProvider = map[string]map[string]interface{}{
 		"aws": {
-			"accessKeyId":     &role.Credentials.AccessKeyId,
-			"secretAccessKey": &role.Credentials.SecretAccessKey,
-			"sessionToken":    &role.Credentials.SessionToken,
+			"accessKeyId":     role.AccessKeyId,
+			"secretAccessKey": role.SecretAccessKey,
+			"sessionToken":    role.SessionToken,
 		},
 	}
 
