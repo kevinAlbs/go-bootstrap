@@ -123,6 +123,16 @@ func encryptManual(ce *mongo.ClientEncryption, d primitive.Binary, a string, b i
 	return out
 }
 
+// createDEK creates a DEK with alt name "dataKey1"
+func createDEK(ce *mongo.ClientEncryption) error {
+	dkOpts := options.DataKey().SetKeyAltNames([]string{"dataKey1"}).SetMasterKey(bson.D{
+		{"region", "us-east-1"},
+		{"key", "arn:aws:kms:us-east-1:579766882180:key/89fcc2c4-08b0-4bd9-9f25-e30687b580d0"},
+	})
+	_, err := ce.CreateDataKey(context.TODO(), "aws", dkOpts)
+	return err
+}
+
 func main() {
 	var (
 		kmsProvider      map[string]map[string]interface{}
@@ -164,6 +174,28 @@ func main() {
 	}
 
 	coll := client.Database("__secret").Collection("__keyvault")
+
+	/* Drop key vault collection. Create a new DEK. */
+	{
+		ce, err := createManualEncryptionClient(connectionString, kmsProvider, keySpace)
+		if err != nil {
+			fmt.Printf("error in createManualEncryptionClient: %s\n", err)
+			exitCode = 1
+			return
+		}
+
+		if err := coll.Drop(context.TODO()); err != nil {
+			fmt.Printf("error in Drop: %v\n", err)
+			exitCode = 1
+			return
+		}
+		err = createDEK(ce)
+		if err != nil {
+			fmt.Printf("error in createDek: %v\n", err)
+			exitCode = 1
+			return
+		}
+	}
 
 	opts := options.FindOne().SetProjection(bson.D{{Key: "_id", Value: 1}})
 	err = coll.FindOne(context.TODO(), bson.D{{Key: "keyAltNames", Value: "dataKey1"}}, opts).Decode(&findResult)
@@ -211,6 +243,13 @@ func main() {
 	fmt.Println(payload)
 
 	coll = client.Database("companyData").Collection("employee")
+	{
+		if err := coll.Drop(context.TODO()); err != nil {
+			fmt.Printf("error in Drop: %v", err)
+			exitCode = 1
+			return
+		}
+	}
 
 	result, err = coll.InsertOne(context.TODO(), payload)
 	if err != nil {
