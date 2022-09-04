@@ -2,6 +2,11 @@ package main
 
 // Are server error codes accessible from authentication errors?
 
+/*
+Q: Should the wrapped `driver.Error` be processed with `mongo.replaceErrors`? `driver.Error` is in the `x` package.
+	A:
+*/
+
 import (
 	"fmt"
 	"os"
