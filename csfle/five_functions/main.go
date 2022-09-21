@@ -11,6 +11,7 @@ package main
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -92,7 +93,7 @@ func main() {
 	if err != nil {
 		log.Panicf("CreateDataKey error: %v\n", err)
 	}
-	fmt.Printf("Created key with a UUID: %v\n", keyid)
+	fmt.Printf("Created key with a UUID: %v\n", hex.EncodeToString(keyid.Data))
 	fmt.Printf("CreateDataKey... end\n")
 
 	fmt.Printf("Encrypt... begin\n")
