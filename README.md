@@ -111,3 +111,6 @@ For example, if an unordered bulk write is done with InsertOne, UpdateOne, Inser
 
 - Changing an option from `string` to `interface{}`. This was considered and rejected as part of GODRIVER-2386. Here is an example why: https://go.dev/play/p/L3PXOxlWw9i
 - Adding variadic options to a function. This was considered and rejected as part of GODRIVER-2391. Here is an [explanation why](https://github.com/mongodb/mongo-go-driver/pull/913#discussion_r868032541).
+
+# Q14 Does Go support operation level readConcern, writeConcern, and readPreference?
+A: No. Grep the options package.
