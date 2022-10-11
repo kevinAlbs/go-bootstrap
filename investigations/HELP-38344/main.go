@@ -4,9 +4,9 @@ import (
 	"context"
 	"log"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readconcern"
 )
 
 func main() {
@@ -23,15 +23,11 @@ func main() {
 		}
 	}()
 
-	coll := client.Database("test").Collection("poc")
-
-	opts := options.AggregateOptions{
-		Custom: bson.M{"readConcern": bson.M{"level": "local"}},
-	}
+	coll := client.Database("test").Collection("poc", options.Collection().SetReadConcern(readconcern.Local()))
 
 	cursor, err := coll.Aggregate(
 		context.TODO(),
-		mongo.Pipeline{}, &opts)
+		mongo.Pipeline{})
 	if err != nil {
 		log.Fatal(err)
 	}
