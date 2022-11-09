@@ -114,3 +114,6 @@ For example, if an unordered bulk write is done with InsertOne, UpdateOne, Inser
 
 # Q14 Does Go support operation level readConcern, writeConcern, and readPreference?
 A: No. Grep the options package.
+
+# Q15 Is mongo.Collection goroutine safe?
+A: Yes. It is documented.
