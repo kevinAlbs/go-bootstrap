@@ -90,6 +90,11 @@ func main() {
 	trials := 1000
 	fmt.Printf("Testing with %v trials ... begin\n", trials)
 	for i := 0; i < trials; i++ {
+		// Remove data from prior to ensure one upsert succeeds.
+		_, err := coll.DeleteMany(context.Background(), bson.M{})
+		if err != nil {
+			panic(err)
+		}
 		var wg sync.WaitGroup
 		repro(coll, &wg)
 		wg.Wait()
