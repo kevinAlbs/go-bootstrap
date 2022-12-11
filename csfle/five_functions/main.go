@@ -103,7 +103,7 @@ func main() {
 	if err != nil {
 		log.Panicf("Encrypt error: %v\n", err)
 	}
-	fmt.Printf("Explicitly encrypted to ciphertext: %v\n", ciphertext)
+	fmt.Printf("Explicitly encrypted to ciphertext: %x\n", ciphertext)
 	fmt.Printf("Encrypt... end\n")
 
 	fmt.Printf("Decrypt... begin\n")
@@ -157,7 +157,7 @@ func main() {
 	if res.Err() != nil {
 		log.Panicf("FindOne error: %v\n", res.Err())
 	}
-	var decoded bson.D
+	var decoded bson.Raw
 	if err = res.Decode(&decoded); err != nil {
 		log.Panicf("Decode error: %v\n", err)
 	}
