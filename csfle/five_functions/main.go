@@ -11,6 +11,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/hex"
 	"fmt"
 	"io/ioutil"
@@ -52,6 +53,29 @@ func getKMSProvidersFromFile(path string) map[string]map[string]interface{} {
 	return kmsProviders
 }
 
+// getKMIPTLSConfig returns TLS config for KMIP if certificates are passed.
+// Certificate file paths can be passed through the environment variables:
+// KMIP_TLS_CA_FILE and KMIP_TLS_CERTIFICATE_KEY_FILE
+func getKMIPTLSConfig() *map[string]*tls.Config {
+	// Configure TLS config if certificates for KMIP were passed.
+	tlsCAFileKMIP := os.Getenv("KMIP_TLS_CA_FILE")
+	tlsClientCertificateKeyFileKMIP := os.Getenv("KMIP_TLS_CERTIFICATE_KEY_FILE")
+	tlsConfig := make(map[string]*tls.Config)
+	if tlsCAFileKMIP != "" && tlsClientCertificateKeyFileKMIP != "" {
+		tlsOpts := map[string]interface{}{
+			"tlsCertificateKeyFile": tlsClientCertificateKeyFileKMIP,
+			"tlsCAFile":             tlsCAFileKMIP,
+		}
+		kmipConfig, err := options.BuildTLSConfig(tlsOpts)
+		if err != nil {
+			log.Panicf("failed to build TLS config: %v", err)
+		}
+		tlsConfig["kmip"] = kmipConfig
+		return &tlsConfig
+	}
+	return nil
+}
+
 func main() {
 	var uri string
 	if uri = os.Getenv("MONGODB_URI"); uri == "" {
@@ -82,6 +106,10 @@ func main() {
 	ceopts := options.ClientEncryption().
 		SetKmsProviders(kmsProviders).
 		SetKeyVaultNamespace("keyvault.datakeys")
+
+	if tlsConfig := getKMIPTLSConfig(); tlsConfig != nil {
+		ceopts.SetTLSConfig(*tlsConfig)
+	}
 
 	ce, err := mongo.NewClientEncryption(keyvaultClient, ceopts)
 	if err != nil {
@@ -132,6 +160,10 @@ func main() {
 		SetKmsProviders(kmsProviders).
 		SetKeyVaultNamespace("keyvault.datakeys").
 		SetSchemaMap(schemaMap)
+
+	if tlsConfig := getKMIPTLSConfig(); tlsConfig != nil {
+		aeOpts.SetTLSConfig(*tlsConfig)
+	}
 
 	encryptedClient, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri).SetAutoEncryptionOptions(aeOpts))
 	if err != nil {
