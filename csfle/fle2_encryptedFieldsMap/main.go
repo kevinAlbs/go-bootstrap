@@ -152,13 +152,14 @@ func main() {
 		}
 	}
 
-	// Use a client with encrypted field map with a missing keyId.
+	// Use a client with encrypted field map with a null keyId.
 	{
 		efm := map[string]interface{}{
 			"db.encrypted": bson.M{
 				"fields": bson.A{
 					bson.M{
-						// keyId is missing.
+						// keyId is null.
+						"keyId":    nil,
 						"path":     "encryptedIndexed",
 						"bsonType": "string",
 						"queries": bson.M{
@@ -189,7 +190,7 @@ func main() {
 		_, err = encryptedCollEFM.InsertOne(context.Background(), bson.M{"_id": 2, "encryptedIndexed": "foo"})
 		if err != nil {
 			log.Fatalf("error in InsertOne: %v", err)
-			// Results in: 2023/01/30 09:56:00 error in InsertOne: mongocrypt error 1: unable to find 'keyId' in 'field' document
+			// Results in: 2023/01/31 09:22:11 error in InsertOne: mongocrypt error 1: expected 'fields.keyId' to be type binary, got: 10
 		}
 	}
 
