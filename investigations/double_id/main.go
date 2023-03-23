@@ -12,16 +12,11 @@ package main
 
 import (
 	"fmt"
-	"os"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 func main() {
-	var uri string
-	if uri = os.Getenv("MONGODB_URI"); uri == "" {
-		uri = "mongodb://localhost:27017"
-	}
 	got := bson.D{{"_id", 1}, {"_id", 2}}
 	asBsonBytes, err := bson.Marshal(got)
 	if err != nil {
