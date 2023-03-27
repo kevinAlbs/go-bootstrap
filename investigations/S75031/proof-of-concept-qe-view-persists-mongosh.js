@@ -42,8 +42,7 @@ const autoEncryptionOpts = {
         local: {
             key: BinData(0, "/tu9jUCBqZdwCelwE/EAm/4WqdxrSMi04B8e9uAV+m30rI1J2nhKZZtQjdvsSCwuI4erR6IEcEK+5eGUAODv43NDNIR9QheT2edWFewUfHKsl9cnzTc86meIzOmYl6dr")
         }
-    },
-    schemaMap: {},
+    }
 };
 const encryptedClient = Mongo(MONGO_URI, autoEncryptionOpts);
 const encryptedDb = encryptedClient.getDB(QE_DATABASE_NAME);
