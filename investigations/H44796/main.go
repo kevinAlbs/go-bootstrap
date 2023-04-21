@@ -332,12 +332,13 @@ func main() {
 		delete(name, "otherNames")
 	}
 	// manually encrypt our firstName and lastName values:
-	name["firstName"], err = encryptManual(clientEncryption, employeeDEK, "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic", name["firstName"])
+	encryptedFirstName, err := encryptManual(clientEncryption, employeeDEK, "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic", name["firstName"])
 	if err != nil {
 		fmt.Printf("ClientEncrypt error: %s\n", err)
 		exitCode = 1
 		return
 	}
+	name["firstName"] = encryptedFirstName
 
 	name["lastName"], err = encryptManual(clientEncryption, employeeDEK, "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic", name["lastName"])
 	if err != nil {
@@ -355,7 +356,7 @@ func main() {
 	}
 	fmt.Print(result.InsertedID)
 
-	err = encryptedColl.FindOne(context.TODO(), bson.M{"name.firstName": firstname}).Decode(&findResult)
+	err = encryptedColl.FindOne(context.TODO(), bson.M{"name.firstName": encryptedFirstName}).Decode(&findResult)
 	if err != nil {
 		fmt.Printf("MongoDB find error: %s\n", err)
 		exitCode = 1
