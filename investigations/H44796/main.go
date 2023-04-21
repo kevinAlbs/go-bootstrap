@@ -314,7 +314,7 @@ func main() {
 		fmt.Printf("UNnmarshalError: %s\n", err)
 	}
 	completeMap := map[string]interface{}{
-		"employData.employee": testSchema,
+		db + "." + collection: testSchema,
 	}
 	encryptedClient, err = createAutoEncryptionClient(connectionString, keySpace, kmsProvider, kmsTLSOptions, completeMap)
 	if err != nil {
