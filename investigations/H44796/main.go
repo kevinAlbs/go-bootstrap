@@ -20,8 +20,11 @@ import (
 )
 
 var (
-	MDB_URI       = "mongodb://localhost:27017"
-	KMIP_ENDPOINT = "localhost:5698"
+	MDB_URI                       = os.Getenv("MONGODB_URI")
+	KMIP_ENDPOINT                 = os.Getenv("KMIP_ENDPOINT")
+	KMIP_TLS_CA_FILE              = os.Getenv("KMIP_TLS_CA_FILE")
+	KMIP_TLS_CERTIFICATE_KEY_FILE = os.Getenv("KMIP_TLS_CERTIFICATE_KEY_FILE")
+	CRYPT_SHARED_LIB_PATH         = os.Getenv("CRYPT_SHARED_LIB_PATH")
 )
 
 func createClient(c string) (*mongo.Client, error) {
@@ -47,7 +50,7 @@ func createManualEncryptionClient(c *mongo.Client, kp map[string]map[string]inte
 func createAutoEncryptionClient(c string, ns string, kms map[string]map[string]interface{}, tlsOps map[string]*tls.Config, s bson.M) (*mongo.Client, error) {
 
 	extraOptions := map[string]interface{}{
-		"cryptSharedLibPath":     "/lib/mongo_crypt_v1.so",
+		"cryptSharedLibPath":     CRYPT_SHARED_LIB_PATH,
 		"cryptSharedLibRequired": true,
 	}
 	autoEncryptionOpts := options.AutoEncryption().
@@ -154,6 +157,27 @@ func main() {
 		os.Exit(exitCode)
 	}()
 
+	if MDB_URI == "" {
+		fmt.Printf("Set required environment variable: MDB_URI")
+		os.Exit(1)
+	}
+	if KMIP_ENDPOINT == "" {
+		fmt.Printf("Set required environment variable: KMIP_ENDPOINT")
+		os.Exit(1)
+	}
+	if KMIP_TLS_CA_FILE == "" {
+		fmt.Printf("Set required environment variable: KMIP_TLS_CA_FILE")
+		os.Exit(1)
+	}
+	if KMIP_TLS_CERTIFICATE_KEY_FILE == "" {
+		fmt.Printf("Set required environment variable: KMIP_TLS_CERTIFICATE_KEY_FILE")
+		os.Exit(1)
+	}
+	if CRYPT_SHARED_LIB_PATH == "" {
+		fmt.Printf("Set required environment variable: CRYPT_SHARED_LIB_PATH")
+		os.Exit(1)
+	}
+
 	provider := "kmip"
 	kmsProvider := map[string]map[string]interface{}{
 		provider: {
@@ -175,8 +199,8 @@ func main() {
 	// Set the KMIP TLS options
 	kmsTLSOptions := make(map[string]*tls.Config)
 	tlsOptions := map[string]interface{}{
-		"tlsCAFile":             "/etc/pki/tls/certs/ca.cert",
-		"tlsCertificateKeyFile": "/home/ec2-user/server.pem",
+		"tlsCAFile":             KMIP_TLS_CA_FILE,
+		"tlsCertificateKeyFile": KMIP_TLS_CERTIFICATE_KEY_FILE,
 	}
 	kmipTLSConfig, err = options.BuildTLSConfig(tlsOptions)
 	if err != nil {
