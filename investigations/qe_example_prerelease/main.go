@@ -1,9 +1,12 @@
 // To run this example:
-// 	 go run -tags cse ./csfle/fle2_insert
+//
+//	go run -tags cse .
+//
 // libmongocrypt is required to run this example.
 // These environment variables are understood:
-//   MONGODB_URI to a MongoDB URI. Required.
-//   SHOW_COMMAND_STARTED=ON to show command started events.
+//
+//	MONGODB_URI to a MongoDB URI. Required.
+//	SHOW_COMMAND_STARTED=ON to show command started events.
 package main
 
 import (
